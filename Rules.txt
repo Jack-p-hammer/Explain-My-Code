@@ -1,0 +1,33 @@
+# Explain My Code - Project Rules
+
+## Project Goals
+- Build a developer tool that explains code snippets with optional context from the rest of the file or codebase.
+- Focus on clarity, utility, and ease of integration into existing developer workflows.
+
+## Target Environment
+- Visual Studio Code extension using TypeScript
+- Output should be shown in an elegant, non-intrusive way (e.g., side panel, popup, or webview)
+
+## User Interaction Rules
+1. User can highlight a code snippet and trigger a command to "Explain This Code".
+2. Optionally, the user can request that the explanation considers the full file or project context.
+3. The response should be concise, technically accurate, and formatted for readability.
+4. The system must not modify the user’s code — only provide explanation.
+5. API keys or LLM backend credentials must be securely handled or stored in `.env`.
+
+## Prompting Rules
+- Prompts should be designed to elicit high-quality, useful explanations from LLMs.
+- If full context is used, it should be truncated or summarized if it exceeds LLM token limits.
+- Always prepend the role of the assistant (e.g., “You are an expert software engineer...”).
+
+## Extension UX Rules
+- A right-click context menu or command palette entry must exist to trigger explanations.
+- If a user selects code, that code is the main prompt content.
+- If no selection is made, provide a helpful message or fallback behavior (e.g., explain current function).
+
+## Optional Stretch Goals
+- Display output in a WebView with syntax highlighting.
+- Include a “Copy Explanation” button.
+- Add command to “Explain Entire File”.
+- Allow fine-tuning settings (LLM model, max tokens, etc.) via extension settings.
+

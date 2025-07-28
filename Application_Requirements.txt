@@ -1,0 +1,29 @@
+# Explain My Code - Technical Requirements
+
+## Functional Requirements
+- [ ] VS Code extension can detect selected text in the active editor.
+- [ ] Extension must register a command: `explainMyCode.explain`
+- [ ] When command is triggered:
+  - [ ] Capture selected code
+  - [ ] Optionally capture full file content
+  - [ ] Send to an LLM API for explanation
+  - [ ] Display the explanation in a popup or panel
+
+## LLM Integration Requirements
+- [ ] API must be configurable (e.g., OpenAI, local server)
+- [ ] Prompt should include:
+  - [ ] Selected code
+  - [ ] Optional context (rest of file, project summary)
+- [ ] Handle errors from API gracefully
+- [ ] Support `.env` config for API keys and endpoint
+
+## UI Requirements
+- [ ] Add context menu option: “Explain Selected Code”
+- [ ] Add command palette option: “Explain My Code”
+- [ ] Explanation must be:
+  - [ ] Easily readable
+  - [ ] Scrollable if long
+  - [ ] Copyable
+- [ ] Prefer using VS Code WebView for advanced output display (optional)
+
+## File Structure
