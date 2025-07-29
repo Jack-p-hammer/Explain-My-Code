@@ -7,7 +7,9 @@
   "engines": {
     "vscode": ">=1.70.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [
     "onCommand:explainMyCode.explain"
   ],
@@ -24,7 +26,7 @@
         {
           "command": "explainMyCode.explain",
           "when": "editorHasSelection",
-          "group": "navigation@100"
+          "group": "navigation"
         }
       ]
     }
@@ -38,11 +40,16 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.70.0",
-    "typescript": "^4.7.4",
-    "eslint": "^8.0.0",
+    "@types/dotenv": "^8.2.0",
     "@types/node": "^16.0.0",
-    "vsce": "^2.10.0"
+    "@types/node-fetch": "^2.6.2",
+    "@types/vscode": "^1.70.0",
+    "eslint": "^8.0.0",
+    "typescript": "^4.7.4",
+    "vsce": "^2.15.0"
   },
-  "dependencies": {}
-} 
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "node-fetch": "^2.6.7"
+  }
+}
