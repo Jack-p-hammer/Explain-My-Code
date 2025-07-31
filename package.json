@@ -29,6 +29,22 @@
           "group": "navigation"
         }
       ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Explain My Code Settings",
+      "properties": {
+        "explainMyCode.apiKey": {
+          "type": "string",
+          "description": "Your LLM API Key",
+          "default": ""
+        },
+        "explainMyCode.apiUrl": {
+          "type": "string",
+          "description": "Your LLM API URL",
+          "default": ""
+        }
+      }
     }
   },
   "scripts": {

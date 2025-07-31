@@ -28,22 +28,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
 const vscode = __importStar(require("vscode"));
-const path = __importStar(require("path"));
-const fs = __importStar(require("fs"));
 const node_fetch_1 = __importDefault(require("node-fetch"));
-const dotenv = __importStar(require("dotenv"));
-// Load .env from workspace root
-const workspaceFolders = vscode.workspace.workspaceFolders;
-if (workspaceFolders && workspaceFolders.length > 0) {
-    const envPath = path.join(workspaceFolders[0].uri.fsPath, '.env');
-    if (fs.existsSync(envPath)) {
-        dotenv.config({ path: envPath });
-    }
-}
-const API_KEY = process.env.LLM_API_KEY;
-const API_URL = process.env.LLM_API_URL;
 function activate(context) {
+    // Read API key and URL from VS Code settings
+    const config = vscode.workspace.getConfiguration('explainMyCode');
+    const API_KEY = config.get('apiKey');
+    const API_URL = config.get('apiUrl');
+    if (!API_KEY || !API_URL) {
+        vscode.window.showInformationMessage(`API key or URL not set. Please go to Settings and set 'Explain My Code: API Key' and 'Explain My Code: API URL'.`);
+    }
     let disposable = vscode.commands.registerCommand('explainMyCode.explain', async () => {
+        const config = vscode.workspace.getConfiguration('explainMyCode');
+        const API_KEY = config.get('apiKey');
+        const API_URL = config.get('apiUrl');
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
             vscode.window.showErrorMessage('No active editor found.');
@@ -56,8 +53,7 @@ function activate(context) {
             return;
         }
         if (!API_KEY || !API_URL) {
-            console.log('API_KEY:', API_KEY, 'API_URL:', API_URL);
-            vscode.window.showErrorMessage('NEW: LLM API key or URL not set in .env.');
+            vscode.window.showErrorMessage('API key or URL not set. Please go to Settings and set them.');
             return;
         }
         try {
@@ -69,7 +65,7 @@ function activate(context) {
                     'HTTP-Referer': 'http://localhost',
                 },
                 body: JSON.stringify({
-                    model: "gryphe/gwen-3-8b",
+                    model: "z-ai/glm-4.5-air:free",
                     messages: [
                         {
                             role: "system",
@@ -79,14 +75,33 @@ function activate(context) {
                             role: "user",
                             content: `Explain the following code:\n\n${selectedText}`
                         }
-                    ]
+                    ],
+                    "max_tokens": 1000
                 })
             });
             if (!response.ok) {
                 throw new Error(`API error: ${response.status} ${response.statusText}`);
             }
             const data = await response.json();
-            const explanation = data.explanation || JSON.stringify(data);
+            console.log('API Response:', JSON.stringify(data, null, 2));
+            // Handle different response formats
+            let explanation = '';
+            if (data.choices && data.choices[0] && data.choices[0].message) {
+                // OpenAI-style response
+                explanation = data.choices[0].message.content;
+            }
+            else if (data.response) {
+                // Some APIs use 'response' field
+                explanation = data.response;
+            }
+            else if (data.explanation) {
+                // Your expected format
+                explanation = data.explanation;
+            }
+            else {
+                // Fallback to stringify the whole response
+                explanation = JSON.stringify(data, null, 2);
+            }
             vscode.window.showInformationMessage('Explanation received. Click to view.', 'View').then(selection => {
                 if (selection === 'View') {
                     const panel = vscode.window.createWebviewPanel('explainMyCode', 'Code Explanation', vscode.ViewColumn.Beside, { enableScripts: false });

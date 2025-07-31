@@ -1,23 +1,23 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
-import * as fs from 'fs';
 import fetch from 'node-fetch';
-import * as dotenv from 'dotenv';
-
-// Load .env from workspace root
-const workspaceFolders = vscode.workspace.workspaceFolders;
-if (workspaceFolders && workspaceFolders.length > 0) {
-  const envPath = path.join(workspaceFolders[0].uri.fsPath, '.env');
-  if (fs.existsSync(envPath)) {
-    dotenv.config({ path: envPath });
-  }
-}
-
-const API_KEY = process.env.LLM_API_KEY;
-const API_URL = process.env.LLM_API_URL;
 
 export function activate(context: vscode.ExtensionContext) {
+  // Read API key and URL from VS Code settings
+  const config = vscode.workspace.getConfiguration('explainMyCode');
+  const API_KEY = config.get<string>('apiKey');
+  const API_URL = config.get<string>('apiUrl');
+  
+  if (!API_KEY || !API_URL) {
+    vscode.window.showInformationMessage(
+      `API key or URL not set. Please go to Settings and set 'Explain My Code: API Key' and 'Explain My Code: API URL'.`
+    );
+  }
+
   let disposable = vscode.commands.registerCommand('explainMyCode.explain', async () => {
+    const config = vscode.workspace.getConfiguration('explainMyCode');
+    const API_KEY = config.get<string>('apiKey');
+    const API_URL = config.get<string>('apiUrl');
+
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
       vscode.window.showErrorMessage('No active editor found.');
@@ -32,8 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     if (!API_KEY || !API_URL) {
-      console.log('API_KEY:', API_KEY, 'API_URL:', API_URL);
-      vscode.window.showErrorMessage('NEW: LLM API key or URL not set in .env.');
+      vscode.window.showErrorMessage('API key or URL not set. Please go to Settings and set them.');
       return;
     }
 
@@ -46,7 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
           'HTTP-Referer': 'http://localhost',
         },
         body: JSON.stringify({
-          model: "gryphe/gwen-3-8b",
+          model: "z-ai/glm-4.5-air:free",
           messages: [
             {
               role: "system",
@@ -56,14 +55,32 @@ export function activate(context: vscode.ExtensionContext) {
               role: "user",
               content: `Explain the following code:\n\n${selectedText}`
             }
-          ]
+          ],
+          "max_tokens": 1000
         })
       });
       if (!response.ok) {
         throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
       const data = await response.json();
-      const explanation = data.explanation || JSON.stringify(data);
+      console.log('API Response:', JSON.stringify(data, null, 2));
+      
+      // Handle different response formats
+      let explanation = '';
+      if (data.choices && data.choices[0] && data.choices[0].message) {
+        // OpenAI-style response
+        explanation = data.choices[0].message.content;
+      } else if (data.response) {
+        // Some APIs use 'response' field
+        explanation = data.response;
+      } else if (data.explanation) {
+        // Your expected format
+        explanation = data.explanation;
+      } else {
+        // Fallback to stringify the whole response
+        explanation = JSON.stringify(data, null, 2);
+      }
+      
       vscode.window.showInformationMessage('Explanation received. Click to view.', 'View').then(selection => {
         if (selection === 'View') {
           const panel = vscode.window.createWebviewPanel(
