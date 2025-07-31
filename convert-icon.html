@@ -10,37 +10,39 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            font-family: Arial, sans-serif;
         }
-        .icon-container {
+        .container {
             text-align: center;
+            padding: 20px;
         }
         .icon {
             width: 128px;
             height: 128px;
             display: block;
             margin: 20px auto;
+            border: 1px solid #ccc;
         }
         .instructions {
-            font-family: Arial, sans-serif;
-            color: #333;
             max-width: 400px;
             line-height: 1.6;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <div class="icon-container">
+    <div class="container">
         <h2>Explain My Code Extension Icon</h2>
-        <img src="icon.svg" alt="Extension Icon" class="icon">
+        <img src="resources/icon.svg" alt="Extension Icon" class="icon">
         <div class="instructions">
-            <h3>To convert to PNG:</h3>
+            <h3>To create a smaller PNG:</h3>
             <ol>
-                <li>Right-click on the icon above</li>
+                <li>Right-click the icon above</li>
                 <li>Select "Save image as..."</li>
-                <li>Save as "icon.png"</li>
-                <li>For high-DPI displays, also create "icon@2x.png" at 256x256 pixels</li>
+                <li>Save as "icon.png" in the resources folder</li>
+                <li>This should be much smaller than the current large file</li>
             </ol>
-            <p><strong>Note:</strong> The icon represents a lightbulb (ideas/explanation) with code brackets, symbolizing code explanation functionality.</p>
+            <p><strong>Note:</strong> The current SVG is quite large. This conversion will create a much smaller PNG file suitable for the marketplace.</p>
         </div>
     </div>
 </body>

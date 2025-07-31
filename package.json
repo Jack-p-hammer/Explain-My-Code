@@ -4,7 +4,7 @@
   "description": "A powerful VS Code extension that explains code snippets using LLM APIs with advanced features and beautiful markdown rendering.",
   "version": "1.0.0",
   "icon": "resources/icon.png",
-  "publisher": "your-publisher-name",
+  "publisher": "HammerTechnologies",
   "engines": {
     "vscode": ">=1.70.0"
   },
@@ -23,12 +23,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/explain-my-code.git"
+    "url": "https://github.com/Jack-p-hammer/Explain-My-Code.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/explain-my-code/issues"
+    "url": "https://github.com/Jack-p-hammer/Explain-My-Code/issues"
   },
-  "homepage": "https://github.com/your-username/explain-my-code#readme",
+  "homepage": "https://github.com/Jack-p-hammer/Explain-My-Code",
   "license": "MIT",
   "activationEvents": [
     "onCommand:explainMyCode.explain"
