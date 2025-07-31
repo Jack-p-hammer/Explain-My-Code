@@ -1,15 +1,35 @@
 {
   "name": "explain-my-code",
   "displayName": "Explain My Code",
-  "description": "Explain selected code using an LLM API.",
-  "version": "0.0.1",
+  "description": "A powerful VS Code extension that explains code snippets using LLM APIs with advanced features and beautiful markdown rendering.",
+  "version": "1.0.0",
+  "icon": "resources/icon.png",
   "publisher": "your-publisher-name",
   "engines": {
     "vscode": ">=1.70.0"
   },
   "categories": [
+    "Programming Languages",
     "Other"
   ],
+  "keywords": [
+    "code",
+    "explanation",
+    "ai",
+    "llm",
+    "documentation",
+    "learning",
+    "review"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/explain-my-code.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/explain-my-code/issues"
+  },
+  "homepage": "https://github.com/your-username/explain-my-code#readme",
+  "license": "MIT",
   "activationEvents": [
     "onCommand:explainMyCode.explain"
   ],
@@ -18,7 +38,19 @@
     "commands": [
       {
         "command": "explainMyCode.explain",
-        "title": "Explain My Code"
+        "title": "Explain Selected Code"
+      },
+      {
+        "command": "explainMyCode.explainFile",
+        "title": "Explain Entire File"
+      },
+      {
+        "command": "explainMyCode.showHistory",
+        "title": "Show Explanation History"
+      },
+      {
+        "command": "explainMyCode.clearHistory",
+        "title": "Clear Explanation History"
       }
     ],
     "menus": {
@@ -27,9 +59,36 @@
           "command": "explainMyCode.explain",
           "when": "editorHasSelection",
           "group": "navigation"
+        },
+        {
+          "command": "explainMyCode.explainFile",
+          "when": "resourceLangId != plaintext",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "explainMyCode.showHistory",
+          "when": "true"
+        },
+        {
+          "command": "explainMyCode.clearHistory",
+          "when": "true"
         }
       ]
     },
+    "keybindings": [
+      {
+        "command": "explainMyCode.explain",
+        "key": "ctrl+shift+e",
+        "when": "editorHasSelection"
+      },
+      {
+        "command": "explainMyCode.explainFile",
+        "key": "ctrl+shift+f",
+        "when": "resourceLangId != plaintext"
+      }
+    ],
     "configuration": {
       "type": "object",
       "title": "Explain My Code Settings",
@@ -43,6 +102,25 @@
           "type": "string",
           "description": "Your LLM API URL",
           "default": ""
+        },
+        "explainMyCode.modelVersion": {
+          "type": "string",
+          "description": "The model version to use for LLM calls (e.g., openai/gpt-4o, z-ai/glm-4.5-air:free)",
+          "default": "z-ai/glm-4.5-air:free"
+        },
+        "explainMyCode.maxTokens": {
+          "type": "number",
+          "description": "Maximum number of tokens for the LLM response",
+          "default": 4000,
+          "minimum": 100,
+          "maximum": 8000
+        },
+        "explainMyCode.timeout": {
+          "type": "number",
+          "description": "API request timeout in milliseconds",
+          "default": 30000,
+          "minimum": 5000,
+          "maximum": 120000
         }
       }
     }
