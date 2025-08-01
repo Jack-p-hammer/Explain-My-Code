@@ -2,7 +2,7 @@
   "name": "explain-my-code",
   "displayName": "Explain My Code",
   "description": "A powerful VS Code extension that explains code snippets using LLM APIs with advanced features and beautiful markdown rendering.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "icon": "resources/icon.png",
   "publisher": "HammerTechnologies",
   "engines": {
