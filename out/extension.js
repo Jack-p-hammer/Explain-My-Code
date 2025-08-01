@@ -382,10 +382,12 @@ class ExplainMyCodeExtension {
     setupCommands() {
         // Main explain command
         const explainCommand = vscode.commands.registerCommand('explainMyCode.explain', () => {
+            console.log('Explain selected code command triggered');
             this.explainSelectedCode();
         });
         // Explain entire file command
         const explainFileCommand = vscode.commands.registerCommand('explainMyCode.explainFile', () => {
+            console.log('Explain entire file command triggered');
             this.explainEntireFile();
         });
         // Show history command
@@ -483,7 +485,15 @@ class ExplainMyCodeExtension {
     }
 }
 function activate(context) {
-    new ExplainMyCodeExtension(context);
+    console.log('Explain My Code extension is now active!');
+    try {
+        new ExplainMyCodeExtension(context);
+        console.log('ExplainMyCodeExtension initialized successfully');
+    }
+    catch (error) {
+        console.error('Failed to initialize ExplainMyCodeExtension:', error);
+        vscode.window.showErrorMessage('Failed to initialize Explain My Code extension: ' + error);
+    }
 }
 exports.activate = activate;
 function deactivate() { }

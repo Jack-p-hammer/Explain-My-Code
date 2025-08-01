@@ -31,7 +31,7 @@
   "homepage": "https://github.com/Jack-p-hammer/Explain-My-Code",
   "license": "MIT",
   "activationEvents": [
-    "onCommand:explainMyCode.explain"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
