@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
-import fetch from 'node-fetch';
+import * as https from 'https';
+import * as http from 'http';
+import { URL } from 'url';
 
 // Types and interfaces
 interface ExtensionConfig {
@@ -52,42 +54,67 @@ class ConfigManager {
 // API service
 class ApiService {
   private static async makeRequest(config: ExtensionConfig, messages: any[]): Promise<ApiResponse> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), config.timeout);
+    return new Promise((resolve, reject) => {
+      const url = new URL(config.apiUrl);
+      const isHttps = url.protocol === 'https:';
+      const client = isHttps ? https : http;
+      
+      const postData = JSON.stringify({
+        model: config.modelVersion,
+        messages,
+        max_tokens: config.maxTokens,
+        temperature: 0.3
+      });
 
-    try {
-      const response = await fetch(config.apiUrl, {
+      const options = {
+        hostname: url.hostname,
+        port: url.port || (isHttps ? 443 : 80),
+        path: url.pathname + url.search,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${config.apiKey}`,
           'HTTP-Referer': 'http://localhost',
           'X-Title': 'Explain My Code Extension',
-          'User-Agent': 'Explain-My-Code-VSCode-Extension/1.0.0'
+          'User-Agent': 'Explain-My-Code-VSCode-Extension/1.0.0',
+          'Content-Length': Buffer.byteLength(postData)
         },
-        body: JSON.stringify({
-          model: config.modelVersion,
-          messages,
-          max_tokens: config.maxTokens,
-          temperature: 0.3
-        }),
-        signal: controller.signal
+        timeout: config.timeout
+      };
+
+      const req = client.request(options, (res) => {
+        let data = '';
+        
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        
+        res.on('end', () => {
+          try {
+            if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+              const response = JSON.parse(data);
+              resolve(response);
+            } else {
+              reject(new Error(`API error: ${res.statusCode} ${res.statusMessage}`));
+            }
+          } catch (error) {
+            reject(new Error(`Failed to parse response: ${error}`));
+          }
+        });
       });
 
-      clearTimeout(timeoutId);
+      req.on('error', (error) => {
+        reject(new Error(`Request failed: ${error.message}`));
+      });
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
-      }
+      req.on('timeout', () => {
+        req.destroy();
+        reject(new Error('Request timed out. Please try again.'));
+      });
 
-      return await response.json();
-    } catch (error: any) {
-      clearTimeout(timeoutId);
-      if (error.name === 'AbortError') {
-        throw new Error('Request timed out. Please try again.');
-      }
-      throw error;
-    }
+      req.write(postData);
+      req.end();
+    });
   }
 
   static async getExplanation(selectedText: string, fullFileText: string, language?: string): Promise<string> {
@@ -410,6 +437,8 @@ class ExplainMyCodeExtension {
   }
 
   private setupCommands(): void {
+    console.log('Setting up commands...');
+    
     // Main explain command
     const explainCommand = vscode.commands.registerCommand('explainMyCode.explain', () => {
       console.log('Explain selected code command triggered');
@@ -442,16 +471,21 @@ class ExplainMyCodeExtension {
   }
 
   private setupStatusBar(): void {
+    console.log('Setting up status bar...');
     this.statusBarItem.text = '$(lightbulb) Explain Code';
     this.statusBarItem.tooltip = 'Click to explain selected code';
     this.statusBarItem.command = 'explainMyCode.explain';
     this.statusBarItem.show();
     this.context.subscriptions.push(this.statusBarItem);
+    console.log('Status bar setup complete');
   }
 
   private async explainSelectedCode(): Promise<void> {
+    console.log('explainSelectedCode called');
+    
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
+      console.log('No active editor found');
       vscode.window.showErrorMessage('No active editor found.');
       return;
     }
@@ -459,11 +493,17 @@ class ExplainMyCodeExtension {
     const selection = editor.selection;
     const selectedText = editor.document.getText(selection);
     
+    console.log('Selected text length:', selectedText.length);
+    console.log('File:', editor.document.fileName);
+    console.log('Language:', editor.document.languageId);
+    
     if (!selectedText) {
+      console.log('No text selected');
       vscode.window.showErrorMessage('No code selected. Please select some code to explain.');
       return;
     }
 
+    console.log('Processing explanation...');
     await this.processExplanation(selectedText, editor.document.getText(), editor.document.fileName, editor.document.languageId);
   }
 
@@ -484,9 +524,17 @@ class ExplainMyCodeExtension {
   }
 
   private async processExplanation(selectedText: string, fullFileText: string, filePath: string, language?: string, isFullFile: boolean = false): Promise<void> {
+    console.log('processExplanation called');
+    console.log('File path:', filePath);
+    console.log('Language:', language);
+    console.log('Is full file:', isFullFile);
+    
     // Validate configuration
     const configValidation = ConfigManager.validateConfig();
+    console.log('Config validation result:', configValidation);
+    
     if (!configValidation.isValid) {
+      console.log('Configuration validation failed:', configValidation.errors);
       vscode.window.showErrorMessage(`Configuration error: ${configValidation.errors.join(', ')}`);
       return;
     }
