@@ -1,136 +1,140 @@
-# Explain My Code VS Code Extension
+# Explain My Code
 
-A powerful VS Code extension that explains code snippets using LLM APIs with advanced features and beautiful markdown rendering.
+A VS Code extension that explains code snippets using LLM APIs. Select any code in your editor and get a detailed explanation with proper markdown formatting.
 
-## ✨ Features
+## Features
 
-### 🎯 Core Functionality
-- **Explain Selected Code**: Right-click or use keyboard shortcuts to explain highlighted code
-- **Explain Entire File**: Explain the complete file content with context
+- **Code Explanation**: Get detailed explanations of selected code snippets
+- **Full File Analysis**: Explain entire files with context
+- **History Management**: View and manage your explanation history
+- **Copy & Save**: Copy explanations to clipboard or save as markdown files
 - **Language-Specific Prompts**: Optimized explanations for different programming languages
 - **Beautiful Markdown Rendering**: Dark theme with syntax highlighting and proper formatting
 
-### 🚀 Advanced Features
-- **Explanation History**: View and reuse previous explanations
-- **Copy to Clipboard**: One-click copying of explanations
-- **Save Explanations**: Export explanations as markdown or text files
-- **Status Bar Integration**: Quick access from the status bar
-- **Keyboard Shortcuts**: Fast access with customizable shortcuts
-- **Progress Indicators**: Visual feedback during API calls
+## Installation
 
-### ⚙️ Configuration
-- **Flexible API Support**: Works with OpenAI, local servers, and other LLM APIs
-- **Customizable Settings**: Adjust timeout, max tokens, and model versions
-- **Secure Configuration**: API keys stored in VS Code settings
+1. Open VS Code Extensions (Ctrl+Shift+X)
+2. Search for "Explain My Code"
+3. Click Install
 
-## 🛠️ Setup
+## Configuration
 
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
+After installation, you need to configure your LLM API settings:
 
-2. **Configure API Settings**
-   - Open VS Code Settings (Ctrl/Cmd + ,)
-   - Search for "Explain My Code"
-   - Set your API Key, URL, and model version
+### 1. Get an API Key
 
-3. **Launch Extension**
-   - Press `F5` in VS Code to launch the extension in a new window
-   - Or build and install the extension package
+This extension works with any LLM API that follows the OpenAI-compatible format. For a free option, you can use OpenRouter with the GLM 4.5 Air model:
 
-## ⌨️ Usage
+1. Visit [OpenRouter](https://openrouter.ai/z-ai/glm-4.5-air:free/api)
+2. Create an account and get your API key
+3. The GLM 4.5 Air model is free and supports 131,072 context tokens
 
-### Keyboard Shortcuts
-- **Ctrl+Shift+E**: Explain selected code
-- **Ctrl+Shift+F**: Explain entire file
+### 2. Configure the Extension
 
-### Context Menu
-- **Right-click** on selected code → "Explain Selected Code"
-- **Right-click** in editor → "Explain Entire File"
+1. Open VS Code Settings (Ctrl+,)
+2. Search for "Explain My Code"
+3. Configure these settings:
 
-### Command Palette
-- **Ctrl+Shift+P** → "Explain Selected Code"
-- **Ctrl+Shift+P** → "Explain Entire File"
-- **Ctrl+Shift+P** → "Show Explanation History"
-- **Ctrl+Shift+P** → "Clear Explanation History"
+**API Key**: Your OpenRouter API key
+**API URL**: `https://openrouter.ai/api/v1/chat/completions`
+**Model Version**: `z-ai/glm-4.5-air:free`
 
-### Status Bar
-- Click the lightbulb icon in the status bar to explain selected code
+### 3. Alternative Models
 
-## ⚙️ Configuration Options
+You can also use other models through OpenRouter:
+- `openai/gpt-4o` (paid)
+- `anthropic/claude-3.5-sonnet` (paid)
+- `meta-llama/llama-3.1-8b-instruct` (free)
 
-| Setting | Description | Default | Range |
-|---------|-------------|---------|-------|
-| `apiKey` | Your LLM API Key | - | - |
-| `apiUrl` | LLM API endpoint URL | - | - |
-| `modelVersion` | Model version to use | `z-ai/glm-4.5-air:free` | - |
-| `maxTokens` | Maximum response tokens | `4000` | 100-8000 |
-| `timeout` | API request timeout (ms) | `30000` | 5000-120000 |
+## Usage
 
-## 🎨 Features in Detail
+### Explain Selected Code
+1. Select code in any file
+2. Right-click and choose "Explain Selected Code"
+3. Or use the keyboard shortcut: `Ctrl+Shift+E`
 
-### Markdown Rendering
-- **Dark Theme**: Easy on the eyes with GitHub-style dark colors
-- **Syntax Highlighting**: Code blocks with language detection
-- **Rich Formatting**: Headers, lists, tables, blockquotes, and more
-- **Responsive Design**: Optimized for different screen sizes
+### Explain Entire File
+1. Open any code file
+2. Right-click and choose "Explain Entire File"
+3. Or use the keyboard shortcut: `Ctrl+Shift+F`
 
-### History Management
-- **Persistent Storage**: Explanations saved during session
-- **Quick Access**: Browse previous explanations with file context
-- **Easy Cleanup**: Clear history with one command
+### View History
+- Use Command Palette (`Ctrl+Shift+P`) and search for "Show Explanation History"
+- View previous explanations and reuse them
 
-### File Operations
-- **Export Options**: Save as markdown or text files
-- **Clipboard Integration**: Copy explanations with formatting
-- **File Context**: Shows source file information
+### Copy or Save Explanations
+- Use the "Copy" button to copy the explanation to clipboard
+- Use the "Save" button to save the explanation as a markdown file
 
-## 🔧 Development
+## Configuration Options
 
-### Project Structure
+| Setting | Description | Default |
+|---------|-------------|---------|
+| `apiKey` | Your LLM API Key | (empty) |
+| `apiUrl` | Your LLM API URL | (empty) |
+| `modelVersion` | Model version to use | `z-ai/glm-4.5-air:free` |
+| `maxTokens` | Maximum response length | 4000 |
+| `timeout` | API request timeout (ms) | 30000 |
+
+## Development
+
+This section is for developers who want to contribute to the extension or run it locally.
+
+### Prerequisites
+- Node.js (v16 or higher)
+- VS Code Extension Development Host
+
+### Setup
+```bash
+git clone https://github.com/Jack-p-hammer/Explain-My-Code.git
+cd Explain-My-Code
+npm install
+npm run compile
 ```
-src/
-├── extension.ts          # Main extension logic
-├── types/               # TypeScript interfaces
-├── services/            # API and utility services
-└── ui/                  # UI components
-```
+
+### Running Locally
+1. Open the project in VS Code
+2. Press `F5` to launch the Extension Development Host
+3. Test the extension in the new VS Code window
 
 ### Building
 ```bash
-npm run compile          # Compile TypeScript
-npm run watch            # Watch for changes
-npm run lint             # Run ESLint
-npm run test             # Run tests
+npm run compile
+vsce package
 ```
 
-## 📋 Requirements
+## Troubleshooting
 
-- **Node.js**: >= 16.0.0
-- **VS Code**: >= 1.70.0
-- **TypeScript**: >= 4.7.4
+**Extension not working?**
+- Check that your API key is correctly configured
+- Verify the API URL is correct for your provider
+- Ensure you have an active internet connection
 
-## 🤝 Contributing
+**Getting API errors?**
+- Verify your API key has sufficient credits
+- Check the model name is correct
+- Try increasing the timeout setting
+
+**No explanations showing?**
+- Make sure you have selected code before running the command
+- Check the VS Code Developer Console for error messages
+
+## Contributing
+
+Feel free to submit issues and enhancement requests. If you want to contribute:
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+4. Submit a pull request
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🐛 Troubleshooting
+## Support
 
-### Common Issues
-- **API Timeout**: Increase the timeout setting in configuration
-- **Empty Responses**: Check your API key and URL settings
-- **Formatting Issues**: Ensure your LLM supports markdown output
-
-### Support
-- Check the [Issues](https://github.com/your-repo/issues) page
-- Review the configuration settings
-- Verify your API credentials and endpoint 
+If you encounter any issues or have questions:
+- Check the [GitHub Issues](https://github.com/Jack-p-hammer/Explain-My-Code/issues)
+- Review the troubleshooting section above
+- Ensure your API configuration is correct 
